@@ -1,686 +1,176 @@
 import React, { useState, useEffect } from 'react';
 import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
-  Image,
-  ImageBackground,
   TouchableOpacity,
   FlatList,
-  Animated,
-  Platform
+
 } from 'react-native'
 import { COLORS, FONTS, SIZES } from '../constants';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-
-let categoriesData = [
-  {
-    id: 1,
-    name: "Education",
-    icon: "school",
-    color: COLORS.yellow,
-    expenses: [
-      {
-        id: 1,
-        title: "Tuition Fee",
-        description: "Tuition fee",
-        location: "ByProgrammers' tuition center",
-        total: 100.00,
-      },
-      {
-        id: 2,
-        title: "Arduino",
-        description: "Hardward",
-        location: "ByProgrammers' tuition center",
-        total: 30.00,
-      },
-      {
-        id: 3,
-        title: "Javascript Books",
-        description: "Javascript books",
-        location: "ByProgrammers' Book Store",
-        total: 20.00,
-      },
-      {
-        id: 4,
-        title: "PHP Books",
-        description: "PHP books",
-        location: "ByProgrammers' Book Store",
-        total: 20.00,
-      }
-    ],
-    summary: 50.00
-  },
-  {
-    id: 2,
-    name: "Nutrition",
-    icon: 'fast-food',
-    color: COLORS.lightBlue,
-    expenses: [
-      {
-        id: 5,
-        title: "Vitamins",
-        description: "Vitamin",
-        location: "ByProgrammers' Pharmacy",
-        total: 25.00,
-      },
-
-      {
-        id: 6,
-        title: "Protein powder",
-        description: "Protein",
-        location: "ByProgrammers' Pharmacy",
-        total: 50.00,
-      },
-
-    ],
-    summary: 150.00
-
-  },
-  {
-    id: 3,
-    name: "Baby",
-    icon: 'happy',
-    color: COLORS.darkgreen,
-    expenses: [
-      {
-        id: 7,
-        title: "Toys",
-        description: "toys",
-        location: "ByProgrammers' Toy Store",
-        total: 25.00,
-      },
-      {
-        id: 8,
-        title: "Baby Car Seat",
-        description: "Baby Car Seat",
-        location: "ByProgrammers' Baby Care Store",
-        total: 100.00,
-      },
-      {
-        id: 9,
-        title: "Pampers",
-        description: "Pampers",
-        location: "ByProgrammers' Supermarket",
-        total: 100.00,
-      },
-      {
-        id: 10,
-        title: "Baby T-Shirt",
-        description: "T-Shirt",
-        location: "ByProgrammers' Fashion Store",
-        total: 20.00,
-      },
-    ],
-    summary: 100.00
-
-  },
-  {
-    id: 4,
-    name: "Beauty & Care",
-    icon: "sparkles",
-    color: COLORS.peach,
-    expenses: [
-      {
-        id: 11,
-        title: "Skin Care product",
-        description: "skin care",
-        location: "ByProgrammers' Pharmacy",
-        total: 10.00,
-      },
-      {
-        id: 12,
-        title: "Lotion",
-        description: "Lotion",
-        location: "ByProgrammers' Pharmacy",
-        total: 50.00,
-      },
-      {
-        id: 13,
-        title: "Face Mask",
-        description: "Face Mask",
-        location: "ByProgrammers' Pharmacy",
-        total: 50.00,
-      },
-      {
-        id: 14,
-        title: "Sunscreen cream",
-        description: "Sunscreen cream",
-        location: "ByProgrammers' Pharmacy",
-        total: 50.00,
-      },
-    ],
-    summary: 90.00
-  },
-  {
-    id: 5,
-    name: "Sports",
-    icon: 'bicycle',
-    color: COLORS.purple,
-    expenses: [
-      {
-        id: 15,
-        title: "Gym Membership",
-        description: "Monthly Fee",
-        location: "ByProgrammers' Gym",
-        total: 45.00,
-      },
-      {
-        id: 16,
-        title: "Gloves",
-        description: "Gym Equipment",
-        location: "ByProgrammers' Gym",
-        total: 15.00,
-      },
-    ],
-    summary: 60.00
-
-  },
-  {
-    id: 6,
-    name: "Clothing",
-    icon: 'shirt',
-    color: COLORS.red,
-    expenses: [
-      {
-        id: 17,
-        title: "T-Shirt",
-        description: "Plain Color T-Shirt",
-        location: "ByProgrammers' Mall",
-        total: 20.00,
-      },
-      {
-        id: 18,
-        title: "Jeans",
-        description: "Blue Jeans",
-        location: "ByProgrammers' Mall",
-        total: 50.00,
-      },
-    ],
-    summary: 50.00
-  }
-]
-
-let categoriesDay = [
-  {
-    id: 1,
-    create_at: '25-05-2021',
-    list_item: [
-      {
-        id: 1,
-        name: "Education",
-        icon: "school",
-        color: COLORS.yellow,
-        expenses: [
-          {
-            id: 1,
-            title: "Tuition Fee",
-            description: "Tuition fee",
-            location: "ByProgrammers' tuition center",
-            total: 100.00,
-          },
-          {
-            id: 2,
-            title: "Arduino",
-            description: "Hardward",
-            location: "ByProgrammers' tuition center",
-            total: 30.00,
-          },
-          {
-            id: 3,
-            title: "Javascript Books",
-            description: "Javascript books",
-            location: "ByProgrammers' Book Store",
-            total: 20.00,
-          },
-          {
-            id: 4,
-            title: "PHP Books",
-            description: "PHP books",
-            location: "ByProgrammers' Book Store",
-            total: 20.00,
-          }
-        ],
-        summary: 50.00
-      },
-      {
-        id: 2,
-        name: "Nutrition",
-        icon: 'fast-food',
-        color: COLORS.lightBlue,
-        expenses: [
-          {
-            id: 5,
-            title: "Vitamins",
-            description: "Vitamin",
-            location: "ByProgrammers' Pharmacy",
-            total: 25.00,
-          },
-
-          {
-            id: 6,
-            title: "Protein powder",
-            description: "Protein",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-
-        ],
-        summary: 150.00
-
-      },
-      {
-        id: 3,
-        name: "Baby",
-        icon: 'happy',
-        color: COLORS.darkgreen,
-        expenses: [
-          {
-            id: 7,
-            title: "Toys",
-            description: "toys",
-            location: "ByProgrammers' Toy Store",
-            total: 25.00,
-          },
-          {
-            id: 8,
-            title: "Baby Car Seat",
-            description: "Baby Car Seat",
-            location: "ByProgrammers' Baby Care Store",
-            total: 100.00,
-          },
-          {
-            id: 9,
-            title: "Pampers",
-            description: "Pampers",
-            location: "ByProgrammers' Supermarket",
-            total: 100.00,
-          },
-          {
-            id: 10,
-            title: "Baby T-Shirt",
-            description: "T-Shirt",
-            location: "ByProgrammers' Fashion Store",
-            total: 20.00,
-          },
-        ],
-        summary: 100.00
-
-      },
-      {
-        id: 4,
-        name: "Beauty & Care",
-        icon: "sparkles",
-        color: COLORS.peach,
-        expenses: [
-          {
-            id: 11,
-            title: "Skin Care product",
-            description: "skin care",
-            location: "ByProgrammers' Pharmacy",
-            total: 10.00,
-          },
-          {
-            id: 12,
-            title: "Lotion",
-            description: "Lotion",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-          {
-            id: 13,
-            title: "Face Mask",
-            description: "Face Mask",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-          {
-            id: 14,
-            title: "Sunscreen cream",
-            description: "Sunscreen cream",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-        ],
-        summary: 90.00
-      },
-      {
-        id: 5,
-        name: "Sports",
-        icon: 'bicycle',
-        color: COLORS.purple,
-        expenses: [
-          {
-            id: 15,
-            title: "Gym Membership",
-            description: "Monthly Fee",
-            location: "ByProgrammers' Gym",
-            total: 45.00,
-          },
-          {
-            id: 16,
-            title: "Gloves",
-            description: "Gym Equipment",
-            location: "ByProgrammers' Gym",
-            total: 15.00,
-          },
-        ],
-        summary: 60.00
-
-      },
-      {
-        id: 6,
-        name: "Clothing",
-        icon: 'shirt',
-        color: COLORS.red,
-        expenses: [
-          {
-            id: 17,
-            title: "T-Shirt",
-            description: "Plain Color T-Shirt",
-            location: "ByProgrammers' Mall",
-            total: 20.00,
-          },
-          {
-            id: 18,
-            title: "Jeans",
-            description: "Blue Jeans",
-            location: "ByProgrammers' Mall",
-            total: 50.00,
-          },
-        ],
-        summary: 50.00
-      }
-    ],
-    total_expense: 1000
-  },
-  {
-    id: 2,
-    create_at: '22-05-2021',
-    list_item: [
-      {
-        id: 1,
-        name: "Education",
-        icon: "school",
-        color: COLORS.yellow,
-        expenses: [
-          {
-            id: 1,
-            title: "Tuition Fee",
-            description: "Tuition fee",
-            location: "ByProgrammers' tuition center",
-            total: 100.00,
-          },
-          {
-            id: 2,
-            title: "Arduino",
-            description: "Hardward",
-            location: "ByProgrammers' tuition center",
-            total: 30.00,
-          },
-          {
-            id: 3,
-            title: "Javascript Books",
-            description: "Javascript books",
-            location: "ByProgrammers' Book Store",
-            total: 20.00,
-          },
-          {
-            id: 4,
-            title: "PHP Books",
-            description: "PHP books",
-            location: "ByProgrammers' Book Store",
-            total: 20.00,
-          }
-        ],
-        summary: 50.00
-      },
-      {
-        id: 2,
-        name: "Nutrition",
-        icon: 'fast-food',
-        color: COLORS.lightBlue,
-        expenses: [
-          {
-            id: 5,
-            title: "Vitamins",
-            description: "Vitamin",
-            location: "ByProgrammers' Pharmacy",
-            total: 25.00,
-          },
-
-          {
-            id: 6,
-            title: "Protein powder",
-            description: "Protein",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-
-        ],
-        summary: 150.00
-
-      },
-      {
-        id: 3,
-        name: "Baby",
-        icon: 'happy',
-        color: COLORS.darkgreen,
-        expenses: [
-          {
-            id: 7,
-            title: "Toys",
-            description: "toys",
-            location: "ByProgrammers' Toy Store",
-            total: 25.00,
-          },
-          {
-            id: 8,
-            title: "Baby Car Seat",
-            description: "Baby Car Seat",
-            location: "ByProgrammers' Baby Care Store",
-            total: 100.00,
-          },
-          {
-            id: 9,
-            title: "Pampers",
-            description: "Pampers",
-            location: "ByProgrammers' Supermarket",
-            total: 100.00,
-          },
-          {
-            id: 10,
-            title: "Baby T-Shirt",
-            description: "T-Shirt",
-            location: "ByProgrammers' Fashion Store",
-            total: 20.00,
-          },
-        ],
-        summary: 100.00
-
-      },
-      {
-        id: 4,
-        name: "Beauty & Care",
-        icon: "sparkles",
-        color: COLORS.peach,
-        expenses: [
-          {
-            id: 11,
-            title: "Skin Care product",
-            description: "skin care",
-            location: "ByProgrammers' Pharmacy",
-            total: 10.00,
-          },
-          {
-            id: 12,
-            title: "Lotion",
-            description: "Lotion",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-          {
-            id: 13,
-            title: "Face Mask",
-            description: "Face Mask",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-          {
-            id: 14,
-            title: "Sunscreen cream",
-            description: "Sunscreen cream",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-        ],
-        summary: 90.00
-      },
-    ],
-    total_expense: 1000
-  },
-  {
-    id: 3,
-    create_at: '21-05-2021',
-    list_item: [
-      {
-        id: 1,
-        name: "Education",
-        icon: "school",
-        color: COLORS.yellow,
-        expenses: [
-          {
-            id: 1,
-            title: "Tuition Fee",
-            description: "Tuition fee",
-            location: "ByProgrammers' tuition center",
-            total: 100.00,
-          },
-          {
-            id: 2,
-            title: "Arduino",
-            description: "Hardward",
-            location: "ByProgrammers' tuition center",
-            total: 30.00,
-          },
-          {
-            id: 3,
-            title: "Javascript Books",
-            description: "Javascript books",
-            location: "ByProgrammers' Book Store",
-            total: 20.00,
-          },
-          {
-            id: 4,
-            title: "PHP Books",
-            description: "PHP books",
-            location: "ByProgrammers' Book Store",
-            total: 20.00,
-          }
-        ],
-        summary: 50.00
-      },
-      {
-        id: 2,
-        name: "Nutrition",
-        icon: 'fast-food',
-        color: COLORS.lightBlue,
-        expenses: [
-          {
-            id: 5,
-            title: "Vitamins",
-            description: "Vitamin",
-            location: "ByProgrammers' Pharmacy",
-            total: 25.00,
-          },
-
-          {
-            id: 6,
-            title: "Protein powder",
-            description: "Protein",
-            location: "ByProgrammers' Pharmacy",
-            total: 50.00,
-          },
-
-        ],
-        summary: 150.00
-
-      },
-      {
-        id: 3,
-        name: "Baby",
-        icon: 'happy',
-        color: COLORS.darkgreen,
-        expenses: [
-          {
-            id: 7,
-            title: "Toys",
-            description: "toys",
-            location: "ByProgrammers' Toy Store",
-            total: 25.00,
-          },
-          {
-            id: 8,
-            title: "Baby Car Seat",
-            description: "Baby Car Seat",
-            location: "ByProgrammers' Baby Care Store",
-            total: 100.00,
-          },
-          {
-            id: 9,
-            title: "Pampers",
-            description: "Pampers",
-            location: "ByProgrammers' Supermarket",
-            total: 100.00,
-          },
-          {
-            id: 10,
-            title: "Baby T-Shirt",
-            description: "T-Shirt",
-            location: "ByProgrammers' Fashion Store",
-            total: 20.00,
-          },
-        ],
-        summary: 100.00
-
-      }
-    ],
-    total_expense: 200
-  }
-]
-
+import axios from 'axios';
+import * as url from '../constants/url'
+import { AuthContext } from '../navigation/AuthProvider';
+import moment from 'moment'
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Modal from 'react-native-modals';
 
 const HistoryScreen = () => {
   const [categories, setCategories] = useState([]);
-
+  const [lastDay, setLastDay] = useState(7);
+  const [isSelectDate, setIsSelectDate] = useState(false);
+  const { token } = React.useContext(AuthContext);
+  const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
-    setCategories(categoriesDay);
-  }, [])
+    if (token) {
+      getHistoryBill()
 
+    }
+  }, [lastDay])
+
+  const getHistoryBill = async () => {
+    await axios.get(url.API_URL + "bills/last-days/" + lastDay,
+      {
+        headers: {
+          "authorization": "Bearer " + token
+        },
+        params: {
+          start_date: startDate,
+          end_date: endDate
+        }
+      }
+    ).then(res => {
+      console.log(res.data);
+      setCategories(res.data)
+    })
+  }
 
 
 
   function renderHeader() {
     return (
-      <View style={{ paddingHorizontal: SIZES.padding, paddingVertical: SIZES.padding, backgroundColor: COLORS.white }}>
-        <View>
-          <Text style={{ color: COLORS.primary, ...FONTS.h2 }}>Lịch sử chi tiêu</Text>
-        </View>
+      <View
+        style={{
+          paddingTop: 50,
+          backgroundColor: COLORS.teal
+        }}>
+        <View
+          style={{
+            paddingHorizontal: SIZES.padding,
+          }}
 
-        <View style={{ flexDirection: 'row', marginTop: SIZES.padding, alignItems: 'center' }}>
-          <View style={{
+        >
+          <Text style={{ color: COLORS.white, fontSize: 21, fontWeight: "bold" }}>Lịch sử chi tiêu</Text>
+        </View>
+        <Modal
+          visible={isSelectDate}
+        >
+          <TouchableOpacity
+            style={{
+              marginLeft: "auto",
+            }}
+            onPress={() => {
+              setIsSelectDate(false)
+            }
+            }
+          >
+            <Icon name='close-circle' size={30} />
+          </TouchableOpacity>
+          <View
+            style={{
+              width: SIZES.width - 100,
+              padding: SIZES.padding
+            }}
+          >
+
+            <Text
+              style={{
+                fontSize: 16,
+                marginBottom: 10
+              }}
+            >Vui lòng chọn ngày bắt đầu:</Text>
+            <DateTimePicker
+              value={startDate}
+              mode="date"
+              placeholder="DD/MM/YYYY"
+              format="DD-MM-YYYY"
+              maxDate={moment().format('DD-MM-YYYY')}
+              confirmBtnText="Chọn"
+              cancelBtnText="Hủy"
+              onChange={(e, selectedDate) => { setStartDate(selectedDate) }}
+              locale="vi"
+            />
+            <Text
+              style={{
+                fontSize: 16,
+                marginVertical: 10
+              }}
+            >Vui lòng chọn ngày kết thúc:</Text>
+            <DateTimePicker
+              value={endDate}
+              mode="date"
+              placeholder="DD/MM/YYYY"
+              format="DD-MM-YYYY"
+              maxDate={moment().format('DD-MM-YYYY')}
+              confirmBtnText="Chọn"
+              cancelBtnText="Hủy"
+              onChange={(e, selectedDate) => { setEndDate(selectedDate) }}
+              locale="vi"
+
+            />
+            <TouchableOpacity
+              style={{
+                padding: 10,
+                borderRadius: 5,
+                backgroundColor: COLORS.teal,
+                width: "50%",
+                alignSelf: 'center',
+                marginTop: SIZES.padding
+              }}
+            >
+              <TouchableOpacity
+
+                onPress={() => {
+                  setIsSelectDate(false);
+                  getHistoryBill()
+                  console.log(startDate, endDate);
+
+                }}
+              >
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    color: COLORS.white
+                  }}
+                >
+
+                  XÁC NHẬN
+                </Text>
+
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+        <View style={{
+          flexDirection: 'row',
+          marginTop: SIZES.padding,
+          alignItems: 'center',
+          backgroundColor: COLORS.lightBlue,
+          paddingHorizontal: SIZES.padding,
+          paddingVertical: 10
+        }}>
+          <TouchableOpacity style={{
             backgroundColor: COLORS.lightGray,
             height: 50,
             width: 50,
             borderRadius: 25,
             justifyContent: 'center',
             alignItems: 'center'
-          }}>
+          }}
+            onPress={() => setIsSelectDate(true)}
+          >
             <Icon name="calendar" size={20} />
             {/* <Image
               source={Icon}
@@ -690,11 +180,13 @@ const HistoryScreen = () => {
                 tintColor: COLORS.lightBlue
               }}
             /> */}
-          </View>
+          </TouchableOpacity>
 
           <View style={{ marginLeft: SIZES.padding }}>
-            <Text style={{ color: COLORS.primary, ...FONTS.h3 }}>11 Nov, 2020</Text>
-            <Text style={{ ...FONTS.body3, color: COLORS.darkgray }}>18% more than last month</Text>
+
+            <Text style={{ fontSize: 16, color: COLORS.primary, fontWeight: "bold" }}>Từ :  {startDate.toLocaleDateString('vi-VN')}</Text>
+
+            <Text style={{ fontSize: 16, color: COLORS.primary, fontWeight: "bold" }}>Đến :  {endDate.toLocaleDateString('vi-VN')}</Text>
           </View>
         </View>
       </View>
@@ -731,7 +223,10 @@ const HistoryScreen = () => {
                 ...FONTS.h2,
                 fontWeight: 'bold'
               }}
-            >{item.create_at}</Text>
+            >{
+                Intl.DateTimeFormat().format(new Date(item._id))
+
+              }</Text>
             <Text
               style={{
                 ...FONTS.h2,
@@ -740,34 +235,74 @@ const HistoryScreen = () => {
             >{item.total_expense}</Text>
           </View>
           {
-            item.list_item?.map(val =>
+            item.list_bills?.map(val =>
+
               <View
                 style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  margin: 5,
-                  paddingVertical: SIZES.radius,
-                  paddingHorizontal: SIZES.padding / 2,
-                  borderRadius: 5,
-                  backgroundColor: COLORS.white,
-
+                  borderRadius: 6,
+                  borderWidth: 1,
+                  borderColor: COLORS.teal,
+                  marginVertical: 5
                 }}
               >
-                <Icon
-                  name={val.icon}
-                  color={val.color}
-                  size={20}
-                />
-                <Text style={{ marginLeft: SIZES.base, color: COLORS.primary, ...FONTS.h4 }}>
-                  {val.name}
-                </Text>
-                <Text
+
+                <TouchableOpacity
                   style={{
-                    marginLeft: 'auto'
+                    flex: 1,
+                    flexDirection: 'row',
+                    margin: 5,
+                    paddingVertical: SIZES.radius,
+                    paddingHorizontal: SIZES.padding / 2,
+                    borderRadius: 5,
+                    backgroundColor: COLORS.white,
+
                   }}
                 >
-                  {val.summary}
-                </Text>
+                  <View
+                    style={{
+                      backgroundColor: val.category[0].icon,
+                      width: 20,
+                      height: 20
+                    }}
+
+                  />
+                  <Text style={{ marginLeft: SIZES.base, color: COLORS.primary, fontSize: 16, fontWeight: "bold" }}>
+                    {val.category[0].name}
+                  </Text>
+                  <Text
+                    style={{
+                      marginLeft: 'auto',
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {val.total}
+                  </Text>
+                </TouchableOpacity>
+                <View
+                  style={{
+                    paddingHorizontal: SIZES.padding,
+                    paddingBottom: SIZES.padding
+                  }}
+                >
+                  {val.listItem?.map(val =>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between'
+                      }}
+                      key={val._id}
+                    >
+
+                      <Text>{val.title}</Text>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          color: COLORS.red
+                        }}
+                      >{val.price}</Text>
+                    </View>
+                  )}
+                </View>
               </View>
             )
           }
@@ -780,7 +315,7 @@ const HistoryScreen = () => {
         <FlatList
           data={categories}
           renderItem={renderItem}
-          keyExtractor={item => `${item.id}`}
+          keyExtractor={item => `${item._id}`}
         />
       </View>
     )

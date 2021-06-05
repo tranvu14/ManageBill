@@ -8,9 +8,9 @@ import {
   Platform,
   StyleSheet,
   StatusBar,
+  ActivityIndicator,
   Alert
 } from 'react-native';
-
 import { AuthContext } from '../navigation/AuthProvider';
 import * as Animatable from 'react-native-animatable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -31,8 +31,11 @@ const SignInScreen = ({ navigation }) => {
     isValidPassword: true,
   });
 
-  const { login } = React.useContext(AuthContext);
-
+  const { login, isSuccess } = React.useContext(AuthContext);
+  const [isLoading, setLoading] = React.useState(false)
+  React.useEffect(() => {
+    setLoading(isSuccess)
+  }, [isSuccess])
   const textInputChange = (val) => {
     if (val.trim().length >= 4) {
       setData({
@@ -89,46 +92,40 @@ const SignInScreen = ({ navigation }) => {
   }
 
   const loginHandle = (userName, password) => {
-    console.log(userName, password);
-    login(userName, password)
+
     // const foundUser = Users.filter(item => {
     //   return userName == item.username && password == item.password;
     // });
 
-    // if (data.username.length == 0 || data.password.length == 0) {
-    //   Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
-    //     { text: 'Okay' }
-    //   ]);
-    //   return;
-    // }
+    if (data.username.length == 0 || data.password.length == 0) {
+      alert('Wrong Input!', 'Username or password field cannot be empty.', [
+        { text: 'Okay' }
+      ]);
+      return;
+    }
+    setLoading(true)
+    login(userName, password)
 
-    // if (foundUser.length == 0) {
-    //   Alert.alert('Invalid User!', 'Username or password is incorrect.', [
-    //     { text: 'Okay' }
-    //   ]);
-    //   return;
-    // }
-    // signIn(foundUser);
   }
 
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor='#009387' barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Welcome!</Text>
+        <Text style={styles.text_header}>Xin chào!</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
         style={styles.footer}
       >
-        <Text style={styles.text_footer}>Username</Text>
+        <Text style={styles.text_footer}>Tên đăng nhập</Text>
         <View style={styles.action}>
           <FontAwesome
             name="user-o"
             size={20}
           />
           <TextInput
-            placeholder="Your Username"
+            placeholder="Tên đăng nhập"
             placeholderTextColor="#666666"
             style={styles.textInput}
             autoCapitalize="none"
@@ -149,21 +146,21 @@ const SignInScreen = ({ navigation }) => {
         </View>
         {data.isValidUser ? null :
           <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Username must be 4 characters long.</Text>
+            <Text style={styles.errorMsg}>Tên đăng nhập phải dài hơn 4 kí tự</Text>
           </Animatable.View>
         }
 
 
         <Text style={[styles.text_footer, {
           marginTop: 35
-        }]}>Password</Text>
+        }]}>Mật khẩu</Text>
         <View style={styles.action}>
           <Feather
             name="lock"
             size={20}
           />
           <TextInput
-            placeholder="Your Password"
+            placeholder="Mật khẩu"
             placeholderTextColor="#666666"
             secureTextEntry={data.secureTextEntry ? true : false}
             style={styles.textInput}
@@ -190,13 +187,13 @@ const SignInScreen = ({ navigation }) => {
         </View>
         {data.isValidPassword ? null :
           <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Password must be 6 characters long.</Text>
+            <Text style={styles.errorMsg}>Mật khẩu phải dài hơn 6 kí tự</Text>
           </Animatable.View>
         }
 
 
         <TouchableOpacity>
-          <Text style={{ color: '#009387', marginTop: 15 }}>Forgot password?</Text>
+          <Text style={{ color: '#009387', marginTop: 15 }}>Quên mật khẩu?</Text>
         </TouchableOpacity>
         <View style={styles.button}>
           <TouchableOpacity
@@ -209,7 +206,7 @@ const SignInScreen = ({ navigation }) => {
           >
             <Text style={[styles.textSign, {
               color: '#fff'
-            }]}>Sign In</Text>
+            }]}>Đăng nhập {isLoading ? <ActivityIndicator /> : null}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -222,7 +219,7 @@ const SignInScreen = ({ navigation }) => {
           >
             <Text style={[styles.textSign, {
               color: '#009387'
-            }]}>Sign Up</Text>
+            }]}>Đăng kí</Text>
           </TouchableOpacity>
         </View>
       </Animatable.View>

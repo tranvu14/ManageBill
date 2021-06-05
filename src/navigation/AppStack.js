@@ -18,81 +18,67 @@ const HomeStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 
-
-
-
-const MainTabScreen = () => {
-
-  useEffect(() => {
-    fetch('http://192.168.1.217:3000/api/user/profile', {
-      mode: "no-cors",
-      headers: {
-        'Authorization': 'Bear eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjIyMjM5MDMzLCJleHAiOjE2MjIyNDI2MzN9.0bZ_dtNDecZzvpV0BW3O1W4cSblFLwOTFegRgFcjCRE'
-      }
-    })
-  }, [])
-  return (
-    <Tab.Navigator
-      initialRouteName="Home"
-      activeColor="#fff"
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'Trang chủ',
-          tabBarColor: '#009387',
-          tabBarIcon: ({ color }) => (
-            <Icon name="ios-home" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="AddPhoto"
-        component={AddPhotoScreen}
-        options={{
-          tabBarButton: (props) =>
-          (
-            <TouchableOpacity
+const MainTabScreen = () => (
+  <Tab.Navigator
+    initialRouteName="Home"
+    activeColor="#fff"
+  >
+    <Tab.Screen
+      name="Home"
+      component={HomeScreen}
+      options={{
+        tabBarLabel: 'Trang chủ',
+        tabBarColor: '#009387',
+        tabBarIcon: ({ color }) => (
+          <Icon name="ios-home" color={color} size={26} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="AddPhoto"
+      component={AddPhotoScreen}
+      options={{
+        tabBarButton: (props) =>
+        (
+          <TouchableOpacity
+            style={{
+              top: -30,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            // onPress={onPress}
+            {...props}
+          >
+            <View
               style={{
-                top: -30,
-                justifyContent: 'center',
-                alignItems: 'center',
+                height: 70
               }}
-              // onPress={onPress}
-              {...props}
             >
-              <View
-                style={{
-                  height: 70
-                }}
-              >
-                <Icon name="add-circle" color='#d02860' size={54} />
-              </View>
+              <Icon name="add-circle" color='#d02860' size={54} />
+            </View>
 
-            </TouchableOpacity>
-          )
+          </TouchableOpacity>
+        )
 
-          ,
+        ,
 
-        }}
-      />
+      }}
+    />
 
 
-      <Tab.Screen
-        name="History"
-        component={HistoryScreen}
-        options={{
-          tabBarLabel: 'Lịch sử',
-          tabBarColor: '#009387',
-          tabBarIcon: ({ color }) => (
-            <Icon name="ios-timer" color={color} size={26} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  )
-};
+    <Tab.Screen
+      name="History"
+      component={HistoryScreen}
+      options={{
+        tabBarLabel: 'Lịch sử',
+        tabBarColor: '#009387',
+        tabBarIcon: ({ color }) => (
+          <Icon name="ios-timer" color={color} size={26} />
+        ),
+      }}
+    />
+  </Tab.Navigator>
+);
 
 export default MainTabScreen;
 

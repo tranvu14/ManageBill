@@ -1,2 +1,2 @@
-export const temp_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjIyMjI1MjQ4LCJleHAiOjE2MjIyMjg4NDh9.j_lDnb5OhxbsCsID1_krzMVO33AdMo3A2PPn4b8LVf0"
-export const API_URL = 'http://192.168.1.217:3000'
+export const API_URL = "https://manage-bill.herokuapp.com/"
+//export const API_URL = "http://localhost:3000/"

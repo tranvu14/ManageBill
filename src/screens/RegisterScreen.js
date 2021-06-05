@@ -23,6 +23,7 @@ const RegisterScreen = ({ navigation }) => {
 
   const { register } = React.useContext(AuthContext);
   const [data, setData] = React.useState({
+    name: '',
     username: '',
     password: '',
     confirm_password: '',
@@ -31,17 +32,17 @@ const RegisterScreen = ({ navigation }) => {
     confirm_secureTextEntry: true,
   });
 
-  const textInputChange = (val) => {
+  const textInputChange = (val, name) => {
     if (val.length !== 0) {
       setData({
         ...data,
-        username: val,
+        [name]: val,
         check_textInputChange: true
       });
     } else {
       setData({
         ...data,
-        username: val,
+        [name]: val,
         check_textInputChange: false
       });
     }
@@ -79,14 +80,14 @@ const RegisterScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar backgroundColor='#009387' barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Register Now!</Text>
+        <Text style={styles.text_header}>Đăng kí ngay !</Text>
       </View>
       <Animatable.View
         animation="fadeInUpBig"
         style={styles.footer}
       >
         <ScrollView>
-          <Text style={styles.text_footer}>Username</Text>
+          <Text style={styles.text_footer}>Tên của bạn</Text>
           <View style={styles.action}>
             <FontAwesome
               name="user-o"
@@ -94,10 +95,10 @@ const RegisterScreen = ({ navigation }) => {
               size={20}
             />
             <TextInput
-              placeholder="Your Username"
+              placeholder="Tên của bạn"
               style={styles.textInput}
               autoCapitalize="none"
-              onChangeText={(val) => textInputChange(val)}
+              onChangeText={(val) => textInputChange(val, 'name')}
             />
             {data.check_textInputChange ?
               <Animatable.View
@@ -114,7 +115,35 @@ const RegisterScreen = ({ navigation }) => {
 
           <Text style={[styles.text_footer, {
             marginTop: 35
-          }]}>Password</Text>
+          }]}>Tên đăng nhập</Text>
+          <View style={styles.action}>
+            <FontAwesome
+              name="user-o"
+              color="#05375a"
+              size={20}
+            />
+            <TextInput
+              placeholder="Tên đăng nhập"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => textInputChange(val, 'username')}
+            />
+            {data.check_textInputChange ?
+              <Animatable.View
+                animation="bounceIn"
+              >
+                <Feather
+                  name="check-circle"
+                  color="green"
+                  size={20}
+                />
+              </Animatable.View>
+              : null}
+          </View>
+
+          <Text style={[styles.text_footer, {
+            marginTop: 35
+          }]}>Mật khẩu</Text>
           <View style={styles.action}>
             <Feather
               name="lock"
@@ -122,7 +151,7 @@ const RegisterScreen = ({ navigation }) => {
               size={20}
             />
             <TextInput
-              placeholder="Your Password"
+              placeholder="Mật khẩu"
               secureTextEntry={data.secureTextEntry ? true : false}
               style={styles.textInput}
               autoCapitalize="none"
@@ -149,7 +178,7 @@ const RegisterScreen = ({ navigation }) => {
 
           <Text style={[styles.text_footer, {
             marginTop: 35
-          }]}>Confirm Password</Text>
+          }]}>Xác nhận mật khẩu</Text>
           <View style={styles.action}>
             <Feather
               name="lock"
@@ -157,7 +186,7 @@ const RegisterScreen = ({ navigation }) => {
               size={20}
             />
             <TextInput
-              placeholder="Confirm Your Password"
+              placeholder="Xác nhận mật khẩu"
               secureTextEntry={data.confirm_secureTextEntry ? true : false}
               style={styles.textInput}
               autoCapitalize="none"
@@ -196,15 +225,24 @@ const RegisterScreen = ({ navigation }) => {
               }]}
               onPress={() => {
                 register(
+                  data.name,
                   data.username,
                   data.password
                 )
+                setData({
+                  ...data,
+                  name: '',
+                  username: '',
+                  password: '',
+                  confirm_password: '',
+                })
+
               }}
             >
 
               <Text style={[styles.textSign, {
                 color: '#fff'
-              }]}>Sign Up</Text>
+              }]}>Đăng kí</Text>
 
             </TouchableOpacity>
 
@@ -218,7 +256,7 @@ const RegisterScreen = ({ navigation }) => {
             >
               <Text style={[styles.textSign, {
                 color: '#009387'
-              }]}>Sign In</Text>
+              }]}>Đăng nhập</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
