@@ -743,7 +743,6 @@ const HomeScreen = () => {
                 backgroundColor: "#FF0000"
               }}
               onPress={() => {
-                console.log(idEditCate);
                 axios.delete(url.API_URL + 'category/' + idEditCate, {
                   headers: {
                     'authorization': "Bearer " + token

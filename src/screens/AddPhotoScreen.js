@@ -24,6 +24,8 @@ import SelectBox from 'react-native-multi-selectbox'
 import axios from 'axios';
 import * as url from '../constants/url'
 import { KeyboardAvoidingView } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment'
 
 const AddPhotoScreen = ({ navigation }) => {
 
@@ -37,7 +39,8 @@ const AddPhotoScreen = ({ navigation }) => {
   const [price, setPrice] = useState('');
   const [editName, setEditName] = useState('');
   const [editPrice, setEditPrice] = useState('');
-  const [isEdit, setIsEdit] = useState(false)
+  const [publishDate, setPublishDate] = useState(new Date());
+  const [isEdit, setIsEdit] = useState(-1)
   // const takePhotoFromCamera = () => {
   //   ImagePicker.openCamera({
   //     compressImageMaxWidth: 300,
@@ -194,7 +197,8 @@ const AddPhotoScreen = ({ navigation }) => {
         name: "Bill mới",
         categoryID: selectedCate,
         listItem: form,
-        publishDate: Date.now(),
+        publishDate: publishDate,
+        imageUrl: image,
         createAt: Date.now()
       }
       , {
@@ -220,7 +224,15 @@ const AddPhotoScreen = ({ navigation }) => {
   }
 
   const editItem = (id) => {
-
+    let tempList = [...form];
+    tempList[id] = {
+      title: editName,
+      price: editPrice
+    }
+    setForm(tempList)
+    setIsEdit(-1)
+    setEditName('')
+    setEditPrice('')
   }
   const renderInput = () => {
     return (
@@ -269,7 +281,11 @@ const AddPhotoScreen = ({ navigation }) => {
                 padding: 5,
                 marginRight: 10
               }}
-
+              onPress={() => {
+                setIsEdit(ind)
+                setEditName(val.title)
+                setEditPrice(val.price)
+              }}
             ><Icon name="create" size={20} /></TouchableOpacity>
             <TouchableOpacity
               style={{
@@ -363,6 +379,106 @@ const AddPhotoScreen = ({ navigation }) => {
             flex: 1
           }}
         >
+          <Modal
+            visible={isEdit !== -1}
+
+          >
+            <KeyboardAvoidingView
+              style={{
+                height: SIZES.height,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: SIZES.width - 50
+              }}
+              behavior="padding"
+            >
+              <View
+                style={{
+                  alignSelf: 'stretch',
+                  marginHorizontal: 32,
+                  backgroundColor: COLORS.white,
+                  padding: SIZES.padding,
+                  borderRadius: 10,
+                  borderColor: COLORS.teal,
+                  borderWidth: 1
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    right: 10
+                  }}
+                  onPress={() => {
+                    setIsEdit(-1)
+                    setEditName('')
+                    setEditPrice('')
+                  }
+                  }
+
+                >
+                  <Icon name='close-circle' size={30} />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '600',
+                    alignSelf: 'center'
+                  }}
+                >Nhập tên :</Text>
+                <TextInput style={{
+                  borderWidth: 1,
+                  borderColor: COLORS.teal,
+                  borderRadius: 6,
+                  height: 30,
+                  marginTop: 8,
+                  paddingHorizontal: 16,
+                  fontSize: 16
+                }}
+                  onChangeText={(val) => setEditName(val)}
+                  defaultValue={editName}
+                />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: '600',
+                    alignSelf: 'center',
+                    marginVertical: 10
+                  }}
+                >Nhập giá :</Text>
+                <TextInput style={{
+                  borderWidth: 1,
+                  borderColor: COLORS.teal,
+                  borderRadius: 6,
+                  height: 30,
+                  marginTop: 8,
+                  paddingHorizontal: 16,
+                  fontSize: 16
+                }}
+                  onChangeText={(val) => setEditPrice(val)}
+                  defaultValue={editPrice}
+                />
+                <TouchableOpacity
+                  style={{
+                    marginTop: 24,
+                    height: 30,
+                    borderRadius: 6,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: COLORS.teal
+                  }}
+                  onPress={() => editItem(isEdit)}
+                >
+                  <Text
+                    style={{
+                      color: COLORS.white,
+                      fontWeight: '600'
+                    }}
+                  >Xác nhận</Text>
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
+          </Modal>
           <TouchableOpacity
             onPress={handleClodeModal}
           >
@@ -387,6 +503,20 @@ const AddPhotoScreen = ({ navigation }) => {
               responseGoogle?.map(val => <Text>{val}</Text>) : <Text>KHÔNG TÌM THẤY</Text>}
             
           </ScrollView> */}
+          <View>
+            <Text>Chọn ngày tạo hóa đơn</Text>
+            <DateTimePicker
+              value={publishDate}
+              mode="date"
+              placeholder="DD/MM/YYYY"
+              format="DD-MM-YYYY"
+              maxDate={moment().format('DD-MM-YYYY')}
+              confirmBtnText="Chọn"
+              cancelBtnText="Hủy"
+              onChange={(e, selectedDate) => { setPublishDate(selectedDate) }}
+              locale="vi"
+            />
+          </View>
           <View
             style={{
               marginTop: 20,
@@ -412,62 +542,9 @@ const AddPhotoScreen = ({ navigation }) => {
       </Modal>
 
 
-      <Modal
-        visible={isEdit}
 
-      >
-        <KeyboardAvoidingView>
-          <View
-            style={{
-              alignSelf: 'stretch',
-              marginHorizontal: 32
-            }}
-          >
-
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: '600',
-                alignSelf: 'center'
-              }}
-            >Nhập tên </Text>
-            <TextInput style={{
-              borderWidth: 1,
-              borderColor: COLORS.teal,
-              borderRadius: 6,
-              height: 30,
-              marginTop: 8,
-              paddingHorizontal: 16,
-              fontSize: 16
-            }}
-              onChangeText={(val) => setEditName(val)}
-              defaultValue={editName}
-            />
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: '600',
-                alignSelf: 'center',
-                marginVertical: 10
-              }}
-            >Nhập giá</Text>
-            <TextInput style={{
-              borderWidth: 1,
-              borderColor: COLORS.teal,
-              borderRadius: 6,
-              height: 30,
-              marginTop: 8,
-              paddingHorizontal: 16,
-              fontSize: 16
-            }}
-              onChangeText={(val) => setEditPrice(val)}
-              defaultValue={editPrice}
-            />
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-      <View style={{ alignItems: 'center', flex: 1 }}>
-        {image && <Image source={{ uri: image }} style={{ flexGrow: 1, width: '100%' }} />}
+      <View style={{ alignItems: 'center', flex: 1, padding: SIZES.padding, paddingTop: 40 }}>
+        {image && <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={{ flexGrow: 1, width: '100%' }} />}
       </View>
       <View style={styles.panel}>
 
