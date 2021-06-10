@@ -23,6 +23,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import SelectBox from 'react-native-multi-selectbox'
 import axios from 'axios';
 import * as url from '../constants/url'
+import { KeyboardAvoidingView } from 'react-native';
 
 const AddPhotoScreen = ({ navigation }) => {
 
@@ -34,6 +35,9 @@ const AddPhotoScreen = ({ navigation }) => {
   const [form, setForm] = useState([]);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [editName, setEditName] = useState('');
+  const [editPrice, setEditPrice] = useState('');
+  const [isEdit, setIsEdit] = useState(false)
   // const takePhotoFromCamera = () => {
   //   ImagePicker.openCamera({
   //     compressImageMaxWidth: 300,
@@ -97,7 +101,7 @@ const AddPhotoScreen = ({ navigation }) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.base64);
+      setImage(result.uri.split(',')[1]);
     }
   };
 
@@ -155,27 +159,69 @@ const AddPhotoScreen = ({ navigation }) => {
 
   const executeResult = (data) => {
     let result = [];
-    let i = 2;
-    while (i < data.length) {
-      let temp = [];
-      temp.push(data[i].description)
-      let j = i + 1;
-      while (data[j]?.boundingPoly?.vertices[3].y - data[i]?.boundingPoly?.vertices[3].y < 1 && j < data.length) {
-        temp.push(data[j].description);
-        j++;
+
+    let temp = [];
+    let total = [];
+    for (let i = 1; i < data.length; i++) {
+      if (data[i + 1]?.boundingPoly?.vertices[0].x - data[i]?.boundingPoly?.vertices[1].x > 0) {
+        temp.push(data[i].description);
+      } else {
+        temp.push(data[i].description);
+        result.push(temp);
+        temp = [];
       }
-
-      result.push(temp);
-
-
-      i = j + 1;
     }
+    for (let i = 1; i < result.length; i++) {
+      if (result[i][result[i].length - 1].match(/\d*\.\d+/) && result[i - 1][0].match(/\D/)) {
+
+        total.push({
+          title: result[i - 1].join(' '),
+          price: result[i][result[i].length - 1]
+        })
+      }
+    }
+    console.log(total);
+    setForm(total)
     setResponseGoogle(result)
   }
   const handleClodeModal = () => {
     setModalVisible(false)
   }
+  const handeAddBill = async () => {
+    await axios.post(url.API_URL + 'bills',
 
+      {
+        name: "Bill mới",
+        categoryID: selectedCate,
+        listItem: form,
+        publishDate: Date.now(),
+        createAt: Date.now()
+      }
+      , {
+        headers: {
+          "authorization": "Bearer " + token
+        }
+      }).then(res => {
+        if (res.status === 200) {
+          alert("Thêm hóa đơn thành công")
+          setForm([])
+          setModalVisible(false)
+          setName('')
+          setPrice('')
+        }
+      })
+  }
+
+  //Delete item
+  const removeItem = (id) => {
+    let tempList = [...form];
+    tempList.splice(id, 1)
+    setForm(tempList)
+  }
+
+  const editItem = (id) => {
+
+  }
   const renderInput = () => {
     return (
 
@@ -204,7 +250,7 @@ const AddPhotoScreen = ({ navigation }) => {
                 padding: 5,
                 marginRight: 10
               }}
-            >{val.name}</Text>
+            >{val.title}</Text>
             <Text
               style={{
                 flex: 1,
@@ -232,7 +278,7 @@ const AddPhotoScreen = ({ navigation }) => {
                 borderColor: "#cd0000",
                 padding: 5
               }}
-
+              onPress={() => removeItem(ind)}
             ><Icon name="trash" size={20} /></TouchableOpacity>
           </View>
         )}
@@ -277,7 +323,7 @@ const AddPhotoScreen = ({ navigation }) => {
             }}
             onPress={() => {
               var formData = [...form, {
-                name: name,
+                title: name,
                 price: price
               }]
               setForm(formData)
@@ -356,13 +402,69 @@ const AddPhotoScreen = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.panelButton}
-              onPress={() => { console.log(selectedCate) }}
+              onPress={() => { handeAddBill() }}
             >
               <Text>XÁC NHẬN</Text>
             </TouchableOpacity>
 
           </View>
         </View>
+      </Modal>
+
+
+      <Modal
+        visible={isEdit}
+
+      >
+        <KeyboardAvoidingView>
+          <View
+            style={{
+              alignSelf: 'stretch',
+              marginHorizontal: 32
+            }}
+          >
+
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: '600',
+                alignSelf: 'center'
+              }}
+            >Nhập tên </Text>
+            <TextInput style={{
+              borderWidth: 1,
+              borderColor: COLORS.teal,
+              borderRadius: 6,
+              height: 30,
+              marginTop: 8,
+              paddingHorizontal: 16,
+              fontSize: 16
+            }}
+              onChangeText={(val) => setEditName(val)}
+              defaultValue={editName}
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: '600',
+                alignSelf: 'center',
+                marginVertical: 10
+              }}
+            >Nhập giá</Text>
+            <TextInput style={{
+              borderWidth: 1,
+              borderColor: COLORS.teal,
+              borderRadius: 6,
+              height: 30,
+              marginTop: 8,
+              paddingHorizontal: 16,
+              fontSize: 16
+            }}
+              onChangeText={(val) => setEditPrice(val)}
+              defaultValue={editPrice}
+            />
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
       <View style={{ alignItems: 'center', flex: 1 }}>
         {image && <Image source={{ uri: image }} style={{ flexGrow: 1, width: '100%' }} />}
