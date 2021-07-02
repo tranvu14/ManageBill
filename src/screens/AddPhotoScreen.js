@@ -26,7 +26,7 @@ import * as url from '../constants/url'
 import { KeyboardAvoidingView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment'
-
+import { executeResult2 } from '../constants/execute2';
 const AddPhotoScreen = ({ navigation }) => {
 
   const [image, setImage] = useState();
@@ -104,7 +104,7 @@ const AddPhotoScreen = ({ navigation }) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri.split(',')[1]);
+      setImage(result.base64);
     }
   };
 
@@ -154,39 +154,44 @@ const AddPhotoScreen = ({ navigation }) => {
         //     array: googleVisionRes.responses[0]?.fullTextAnnotation?.text?.split('\n')
         //   }
         // )
-        executeResult(googleVisionRes.responses[0]?.textAnnotations)
+        const executed_result = executeResult2(googleVisionRes.responses[0]?.textAnnotations)
+        if (executed_result.length > 0) {
+          console.log(executed_result);
+          setForm(executed_result)
+          // setResponseGoogle(executed_result)
+        }
+
         setModalVisible(true)
 
       }).catch((error) => { console.log(error) })
   }
+  // const executeResult = (data) => {
+  //   let result = [];
 
-  const executeResult = (data) => {
-    let result = [];
+  //   let temp = [];
+  //   let total = [];
+  //   for (let i = 1; i < data.length; i++) {
+  //     if (data[i + 1]?.boundingPoly?.vertices[0].x - data[i]?.boundingPoly?.vertices[1].x > 0) {
+  //       temp.push(data[i].description);
+  //     } else {
+  //       temp.push(data[i].description);
+  //       result.push(temp);
+  //       temp = [];
+  //     }
+  //   }
+  //   console.log("result", result);
+  //   for (let i = 1; i < result.length; i++) {
+  //     if (result[i][result[i].length - 1].match(/\d*\.\d+/) && result[i - 1][0].match(/\D/)) {
 
-    let temp = [];
-    let total = [];
-    for (let i = 1; i < data.length; i++) {
-      if (data[i + 1]?.boundingPoly?.vertices[0].x - data[i]?.boundingPoly?.vertices[1].x > 0) {
-        temp.push(data[i].description);
-      } else {
-        temp.push(data[i].description);
-        result.push(temp);
-        temp = [];
-      }
-    }
-    for (let i = 1; i < result.length; i++) {
-      if (result[i][result[i].length - 1].match(/\d*\.\d+/) && result[i - 1][0].match(/\D/)) {
-
-        total.push({
-          title: result[i - 1].join(' '),
-          price: result[i][result[i].length - 1]
-        })
-      }
-    }
-    console.log(total);
-    setForm(total)
-    setResponseGoogle(result)
-  }
+  //       total.push({
+  //         title: result[i - 1].join(' '),
+  //         price: result[i][result[i].length - 1]
+  //       })
+  //     }
+  //   }
+  //   setForm(total)
+  //   setResponseGoogle(result)
+  // }
   const handleClodeModal = () => {
     setModalVisible(false)
   }
@@ -198,7 +203,9 @@ const AddPhotoScreen = ({ navigation }) => {
         categoryID: selectedCate,
         listItem: form,
         publishDate: publishDate,
-        imageUrl: image,
+        imageUrl: JSON.stringify({
+          image: image
+        }),
         createAt: Date.now()
       }
       , {
@@ -236,8 +243,6 @@ const AddPhotoScreen = ({ navigation }) => {
   }
   const renderInput = () => {
     return (
-
-
       <ScrollView
         style={{
           flex: 1,
@@ -370,7 +375,8 @@ const AddPhotoScreen = ({ navigation }) => {
           padding: SIZES.padding / 2,
           borderRadius: 6,
           borderWidth: 1,
-          borderColor: COLORS.teal
+          borderColor: COLORS.teal,
+          marginTop: 50
         }}
       >
         <View
@@ -490,19 +496,23 @@ const AddPhotoScreen = ({ navigation }) => {
               }}
             />
           </TouchableOpacity>
-          {renderInput()}
-          {/* <ScrollView
+
+          <ScrollView
             style={{
               alignSelf: 'stretch',
               padding: SIZES.padding / 2,
-              backgroundColor: COLORS.darkgray,
               borderRadius: 5
 
             }}>
-            {responseGoogle ?
-              responseGoogle?.map(val => <Text>{val}</Text>) : <Text>KHÔNG TÌM THẤY</Text>}
-            
-          </ScrollView> */}
+            {renderInput()}
+            {image &&
+              <Image source={{ uri: `data:image/jpeg;base64,${image}` }} style={{ flexGrow: 1, width: '100%' }} />}
+
+
+            {/* {responseGoogle ?
+              responseGoogle?.map(val => <Text>{val}</Text>) : <Text>KHÔNG TÌM THẤY</Text>} */}
+
+          </ScrollView>
           <View>
             <Text>Chọn ngày tạo hóa đơn</Text>
             <DateTimePicker
@@ -553,8 +563,11 @@ const AddPhotoScreen = ({ navigation }) => {
             <TouchableOpacity style={styles.panelButton} onPress={() => callGoogleVIsionApi(image)}>
               <Text style={styles.panelButtonTitle}>Xác nhận</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.panelButton} onPress={takeImage}>
+            <TouchableOpacity style={styles.panelButton} onPress={pickImage}>
               <Text style={styles.panelButtonTitle}>Chọn lại</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.panelButton} onPress={takeImage}>
+              <Text style={styles.panelButtonTitle}>Chụp lại</Text>
             </TouchableOpacity>
           </View>
           :

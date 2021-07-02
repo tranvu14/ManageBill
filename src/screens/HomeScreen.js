@@ -26,6 +26,7 @@ const HomeScreen = () => {
 
 
   const [categories, setCategories] = useState([]);
+  const [lastMonthReport, setLastMonthReport] = useState([]);
   const [viewMode, setViewMode] = React.useState("chart")
   const [selectedCategory, setSelectedCategory] = React.useState(null)
   const categoryListHeightAnimationValue = useRef(new Animated.Value(115)).current;
@@ -46,7 +47,7 @@ const HomeScreen = () => {
   useEffect(() => {
     if (token) {
       getCate()
-
+      getLastMonthReport()
     }
 
   }, [token])
@@ -65,6 +66,21 @@ const HomeScreen = () => {
       .then(res => { setCategories(res.data) })
   }
 
+  const getLastMonthReport = async () => {
+    axios.get(url.API_URL + 'category/total_bills', {
+      headers: {
+        'authorization': "Bearer" + token
+      }
+    }).then(res => setLastMonthReport(res.data))
+  }
+
+  const caculatePercent = () => {
+    if (lastMonthReport.length > 0 && categories.length > 0) {
+      var total_now = categories.reduce((sum, arr) => { return sum + arr.summary }, 0)
+      var total_last = categories.reduce((sum, arr) => { return sum + arr.summary }, 0)
+    }
+    return total_now > total_last ? "Cao hơn" : "Thấp hơn" + total_now / total_last * 100
+  }
   function renderHeader() {
     return (
       <View style={{
@@ -221,7 +237,7 @@ const HomeScreen = () => {
 
             <Text style={{ fontSize: 16, color: COLORS.primary, fontWeight: "bold" }}>Đến :  {endDate.toLocaleDateString('vi-VN')}</Text>
             <Text style={{ fontSize: 20, color: COLORS.red, fontWeight: "bold" }}>{categories.length > 0 ? categories.reduce((sum, arr) => { return sum + arr.summary }, 0) : 0} VNĐ</Text>
-            <Text style={{ fontSize: 16, color: COLORS.darkgray }}>18% more than last month</Text>
+            <Text style={{ fontSize: 16, color: COLORS.darkgray }}>Cao hơn {caculatePercent()}% so với tháng trước </Text>
           </View>
         </View>
       </View >
@@ -486,7 +502,7 @@ const HomeScreen = () => {
     )
 
     return (
-      <View style={{ padding: SIZES.padding }}>
+      <View style={{ padding: SIZES.padding, flex: 1 }}>
         <FlatList
           data={data}
           renderItem={renderItem}

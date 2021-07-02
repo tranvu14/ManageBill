@@ -14,6 +14,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import moment from 'moment'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Modal from 'react-native-modals';
+import { ScrollView } from 'react-native';
 
 const HistoryScreen = () => {
   const [categories, setCategories] = useState([]);
@@ -22,7 +23,7 @@ const HistoryScreen = () => {
   const { token } = React.useContext(AuthContext);
   const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
   const [endDate, setEndDate] = useState(new Date());
-
+  const [detailBill, setDetailBill] = useState(null);
   useEffect(() => {
     if (token) {
       getHistoryBill()
@@ -42,11 +43,19 @@ const HistoryScreen = () => {
         }
       }
     ).then(res => {
-      console.log(res.data);
       setCategories(res.data)
     })
   }
-
+  const selectBill = async (id) => {
+    await axios.get(url.API_URL + "bills/" + id,
+      {
+        headers: {
+          "authorization": "Bearer " + token
+        },
+      }).then(
+        res => setDetailBill(res.data)
+      )
+  }
 
 
   function renderHeader() {
@@ -153,6 +162,121 @@ const HistoryScreen = () => {
             </TouchableOpacity>
           </View>
         </Modal>
+        <Modal
+          visible={detailBill !== null}
+        >
+          <View
+            style={{
+              height: SIZES.height - 100,
+              width: SIZES.width - 50,
+              padding: SIZES.padding
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => { setDetailBill(null) }}
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: 10
+              }}
+            >
+              <Icon
+                name='close-circle'
+                size={25}
+                style={{
+                  marginLeft: 'auto'
+                }}
+              />
+            </TouchableOpacity>
+
+            <ScrollView>
+              {detailBill?.imageUrl && <Image source={{ uri: `data:image/jpeg;base64,${detailBill?.imageUrl}` }} />}
+              <View style={{
+                flexDirection: "row",
+                marginVertical: 5,
+              }}>
+                <Text
+                  style={{
+                    flex: 1,
+                    fontWeight: '600',
+                    padding: 5,
+                    marginRight: 10,
+                    fontSize: 16
+                  }}
+                >Mặt hàng</Text>
+                <Text
+                  style={{
+                    flex: 1,
+                    fontWeight: '600',
+                    padding: 5,
+                    marginRight: 10,
+                    fontSize: 16
+
+                  }}
+                >Giá tiền</Text>
+              </View>
+              {detailBill?.listItem.length > 0 &&
+                detailBill?.listItem.map((val) => (
+                  <View
+                    key={val._id}
+                    style={{
+                      flexDirection: "row",
+                      marginVertical: 5,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        flex: 1,
+                        borderWidth: 1,
+                        borderColor: COLORS.darkgreen,
+                        borderRadius: 5,
+                        padding: 5,
+                        marginRight: 10
+                      }}
+                    >{val.title}</Text>
+                    <Text
+                      style={{
+                        flex: 1,
+                        borderWidth: 1,
+                        borderColor: COLORS.darkgreen,
+                        borderRadius: 5,
+                        padding: 5,
+                        marginRight: 10
+                      }}
+                    >{val.price}</Text>
+                    {/* <TouchableOpacity
+                    style={{
+                      borderWidth: 1,
+                      borderRadius: 5,
+                      borderColor: COLORS.yellow,
+                      padding: 5,
+                      marginRight: 10
+                    }}
+                    onPress={() => {
+                      setIsEdit(ind)
+                      setEditName(val.title)
+                      setEditPrice(val.price)
+                    }}
+                  ><Icon name="create" size={20} /></TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      borderWidth: 1,
+                      borderRadius: 5,
+                      borderColor: "#cd0000",
+                      padding: 5
+                    }}
+                    onPress={() => removeItem(ind)}
+                  ><Icon name="trash" size={20} /></TouchableOpacity> */}
+                  </View>
+                ))
+              }
+              {
+                detailBill && <Text>{detailBill?.total}</Text>
+              }
+
+            </ScrollView>
+          </View>
+        </Modal>
         <View style={{
           flexDirection: 'row',
           marginTop: SIZES.padding,
@@ -194,7 +318,7 @@ const HistoryScreen = () => {
   }
   function renderHistoryList() {
     const renderItem = ({ item }) => (
-      <TouchableOpacity
+      <View
         // onPress={() => setSelectedCategory(item)}
         style={{
           flex: 1,
@@ -238,6 +362,7 @@ const HistoryScreen = () => {
             item.list_bills?.map(val =>
 
               <View
+                key={val._id}
                 style={{
                   borderRadius: 6,
                   borderWidth: 1,
@@ -257,6 +382,7 @@ const HistoryScreen = () => {
                     backgroundColor: COLORS.white,
 
                   }}
+                  onPress={() => selectBill(val._id)}
                 >
                   <View
                     style={{
@@ -307,7 +433,7 @@ const HistoryScreen = () => {
             )
           }
         </View>
-      </TouchableOpacity>
+      </View>
     )
     return (
       <View style={{ paddingHorizontal: SIZES.padding - 5, flex: 1 }}>
